@@ -1,3 +1,3 @@
 #include "windows.h"
 
-SpriteSheet Image "res/37247.bmp"
+SpriteSheet BITMAP "res/37247.bmp"

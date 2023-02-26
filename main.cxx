@@ -1,9 +1,9 @@
 #include <windows.h>
 
 #include "MazeWindow.h"
+#include "GameController.h"
 
-
-int
+int 
 #if !defined(_MAC)
     #if defined(_M_CEE_PURE)
         __clrcall
@@ -15,16 +15,23 @@ int
 #endif
 WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
 {
-    if (SUCCEEDED(CoInitializeEx(NULL, COINIT_MULTITHREADED))) {        
+    try {
+        if (SUCCEEDED(CoInitializeEx(NULL, COINIT_MULTITHREADED))) {
 
-        MazeWindow app;
+            MazeWindow app;
 
-        app.setModel(new MazeModel);
+            GameController controller;
+            std::thread controllerRunner(&GameController::run, &controller);
+            app.setModel(controller.model());
 
-        if (app.init())
             app.RunMessageLoop();
-
-        CoUninitialize();
+            controller.setState(false);
+            controllerRunner.join();
+            CoUninitialize();
+        }
+    }
+    catch (const std::exception& ex) {
+        MessageBoxA(0, ex.what(), "Fatal Error", MB_OK | MB_ICONERROR);
     }
 
     exit(0);

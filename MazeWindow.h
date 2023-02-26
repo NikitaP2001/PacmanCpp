@@ -1,85 +1,68 @@
 #pragma once
 
 #include <mutex>
+#include <thread>
+
+#include <Windows.h>
 
 #include <d2d1.h>
 #include <d2d1helper.h>
 #include <dwrite.h>
 #include <wincodec.h>
+#include <wrl/client.h>
 
-#include "MazeModel.h"
+#include "GameController.h"
+#include "D2DWindow.h"
 
-using error_code = enum {
-    unsucceed = -1,
-    succeed = 0,
-};
 
-class MazeWindow {
+class MazeWindow : public D2DWindow {
 
 public:
 
-    MazeWindow() = default;
+    MazeWindow();
 
-    error_code init() noexcept;
-      
-    void RunMessageLoop() noexcept;
-
-    void setModel(MazeModel *model) noexcept;
+    void setModel(GameModel *model) noexcept;    
 
     ~MazeWindow();
 
-protected:    
+protected:
 
-    HRESULT OnRender() noexcept;
+    void OnDraw(ID2D1HwndRenderTarget* pRenderTarget) noexcept override;
 
-    void OnResize(UINT width, UINT height) noexcept;
+    HRESULT OnResize(UINT width, UINT height) noexcept override;
 
-private:
+    HRESULT OnKeydown(SHORT vKeyCode) noexcept override;
 
-    HRESULT LoadResourceBitmap(PCWSTR resourceName, PCWSTR resourceType,
-        UINT destinationWidth, UINT destinationHeight, ID2D1Bitmap** ppBitmap);
+    HRESULT CreateDeviceResources() noexcept override;
 
-    ATOM regWindowClass() noexcept;
+    void DiscardDeviceResources() noexcept override;
 
-    HRESULT createWindowEvent(HWND hWnd, LPARAM lParam) noexcept;
-
-    HRESULT sizeEvent(LPARAM lParam) noexcept;
-
-    error_code initOnce() noexcept;
-
-    error_code setWindowSize(double height, double width) noexcept;
-
-    HRESULT CreateDeviceIndependentResources() noexcept;
+private:                        
     
-    HRESULT CreateDeviceResources() noexcept;
-    
-    void DiscardDeviceResources() noexcept;    
-    
-    static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) noexcept;    
-    
+    void redrawLoop() noexcept;
 
-private:
+private:    
 
-    HWND m_hwnd = nullptr;
-    ID2D1Factory* m_pDirect2dFactory = nullptr;
-    ID2D1HwndRenderTarget* m_pRenderTarget = nullptr;    
-    ID2D1SolidColorBrush* m_pBlueBrush = nullptr;
-    ID2D1SolidColorBrush* m_pCornflowerBlueBrush = nullptr;
-    ID2D1Bitmap* m_pBmpSprites = nullptr;
+    Microsoft::WRL::ComPtr<ID2D1Bitmap> bmpSprites;
 
-    std::unique_ptr<MazeModel> m_model;
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_blueBrush;
 
-    std::once_flag m_initFlag;
+    std::thread m_redrawThread;
+    bool m_continueRedraw = true;
 
-    error_code m_status = error_code::unsucceed;
+    std::chrono::time_point<std::chrono::steady_clock> m_lastDraw{};
 
-    static constexpr double m_kDips = 96.f;
+    static constexpr const int m_kMillisInSec = 1000;
+
+    GameModel *m_model = nullptr;     
 
     double m_pxlWndWidth  = 640.f;
     double m_pxlWndHeight = 480.f;
+
+    int m_framesPerSec = 48;
     
-    static constexpr int m_kPxCellSize = 20;
+    static constexpr std::size_t m_kPxCellSize = 20;
     
-    static constexpr TCHAR* m_kClassName = TEXT("D2DMazeWindow");
-    static constexpr TCHAR* m_kWndTitle = TEXT("The Maze");
+    static constexpr const TCHAR* m_kClassName = TEXT("D2DMazeWindow");
+    static constexpr const TCHAR* m_kWndTitle = TEXT("The Maze");
 };

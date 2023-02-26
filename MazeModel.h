@@ -10,29 +10,22 @@ class MazeModel {
 
 public:
 
-    MazeModel();
+    MazeModel();    
 
-    std::size_t mapWidth() const noexcept;
+    D2D_SIZE_U mapSize() const noexcept;
 
-    std::size_t mapHeight() const noexcept;
-
-    std::vector<Wall> getWalls(bool getAll);
-
-    std::vector<Entity> getEntities();
-
-    void eventLoop();
+    std::vector<Cell::Wall> getWalls(bool getAll);
 
 private:
 
     /* @throw logic_error, bad_alloc */
-    void addWall(cell_pos_t xUL, cell_pos_t yUL, cell_pos_t xRX, cell_pos_t yRD);
+    void addWall(D2D_RECT_U position);
 
 private:
 
-    std::set<Wall> walls;
+    std::set<Cell::Wall> walls;
 
-    cell_pos_t m_mapWidth = 32;
-    cell_pos_t m_mapHeigth = 24;
+    D2D_SIZE_U m_mapSize{ 32, 24 };    
     
-    static constexpr char* m_kInvalidPos = "Given position is invalid in current map context";
+    static constexpr const char* m_kInvalidPos = "Given position is invalid in current map context";
 };
