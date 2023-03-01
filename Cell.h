@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdexcept>
+#include <set>
 
 #include <d2d1helper.h>
 
@@ -11,6 +12,8 @@ namespace Cell {
     position operator*(position left, std::size_t scale) noexcept;
 
     bool operator!=(position left, position right);
+
+    bool operator==(position left, position right);
 
     enum class Direction {
         undefined,
@@ -24,7 +27,7 @@ namespace Cell {
     Direction targetDirection(position current, position target);
 
     /* @throw logic arror*/
-    position directionToTarget(position current, Direction direction);
+    position directionToTarget(position current, Direction direction);    
 
     struct Wall {
 
@@ -33,5 +36,10 @@ namespace Cell {
         bool operator<(const Wall& other) const;
 
     };
+
+    Wall crossedWallByDirectioin(position current, Direction way);
+
+
+    void createMaze(D2D_SIZE_U fieldSize, std::set<Wall>& newWalls);
 
 };

@@ -22,7 +22,9 @@ public:
 
 protected:
 
-    virtual void OnDraw(ID2D1HwndRenderTarget* pRenderTarget) noexcept;
+    virtual void OnDraw(ID2D1HwndRenderTarget* pRenderTarget) = 0;
+
+    HRESULT OnResize(UINT width, UINT height) override;
 
     virtual HRESULT CreateDeviceResources() noexcept;
 
@@ -30,7 +32,7 @@ protected:
 
 private:
 
-    HRESULT OnRender() noexcept override;
+    HRESULT OnRender() override;
 
     HRESULT CreateDeviceIndependentResources() noexcept;
 

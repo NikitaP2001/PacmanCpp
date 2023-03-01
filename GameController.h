@@ -12,14 +12,7 @@ public:
 
     GameModel() noexcept;
 
-    void keyEvent()
-    {
-        if (m_kKeyToDirection.contains(m_lastPlayerKey) && !m_pacman.isMoving()) {
-            auto direction = m_kKeyToDirection.at(m_lastPlayerKey);
-            Cell::position target = Cell::directionToTarget(m_pacman.position(), direction);
-            m_pacman.setTarget(target);
-        }        
-    }
+    void keyEvent();
 
     void stepEvent();
 
@@ -30,7 +23,11 @@ public:
 
     std::vector<Entity*> entities()
     {
-        return { &m_pacman };
+        std::vector<Entity*> all;
+        all.push_back(&m_pacman);
+        for (auto& entry : m_food)
+            all.push_back(&entry);        
+        return all;
     }
 
     void setPlayerKey(SHORT vKeyCode)

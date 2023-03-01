@@ -7,9 +7,7 @@ using namespace Cell;
 
 MazeWindow::MazeWindow()
     : m_redrawThread(&MazeWindow::redrawLoop, this)
-{
-    if (!setWindowSize(m_pxlWndWidth, m_pxlWndHeight))
-        throw std::runtime_error("Window resize faield");
+{    
     BasicWindow::show();
 }
 
@@ -20,9 +18,7 @@ void MazeWindow::setModel(GameModel* model) noexcept
     MazeModel* maze = m_model->maze();
     std::size_t pxMapWidth = m_kPxCellSize * maze->mapSize().width;
     std::size_t pxMapHeight = m_kPxCellSize * maze->mapSize().height;
-    setWindowSize(static_cast<double>(pxMapWidth), static_cast<double>(pxMapHeight));
-    InvalidateRect(windowHandle(), NULL, false);
-    UpdateWindow(windowHandle());
+    setClientSize(static_cast<double>(pxMapWidth), static_cast<double>(pxMapHeight));        
 }
 
 
@@ -33,7 +29,7 @@ MazeWindow::~MazeWindow()
 }
 
 
-void MazeWindow::OnDraw(ID2D1HwndRenderTarget* pRenderTarget) noexcept
+void MazeWindow::OnDraw(ID2D1HwndRenderTarget* pRenderTarget)
 {
 
     pRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
@@ -45,17 +41,7 @@ void MazeWindow::OnDraw(ID2D1HwndRenderTarget* pRenderTarget) noexcept
 
     if (m_model) {
 
-        auto walls = m_model->maze()->getWalls(true);
-
-        for (const auto& wall : walls) {
-            auto&& rect = wall.rect;
-            pRenderTarget->DrawLine(
-                D2D1::Point2F(static_cast<FLOAT>(rect.left) * m_kPxCellSize,
-                    static_cast<FLOAT>(rect.top) * m_kPxCellSize),
-                D2D1::Point2F(static_cast<FLOAT>(rect.right) * m_kPxCellSize,
-                    static_cast<FLOAT>(rect.bottom) * m_kPxCellSize),
-                m_blueBrush.Get(), 3.f);
-        }
+        auto walls = m_model->maze()->getWalls(true);        
 
         auto entities = m_model->entities();
         for (const auto entity : entities) {
@@ -65,22 +51,21 @@ void MazeWindow::OnDraw(ID2D1HwndRenderTarget* pRenderTarget) noexcept
                 destUpperLeft.x + m_kPxCellSize, destUpperLeft.y + m_kPxCellSize };
             pRenderTarget->DrawBitmap(bmpSprites.Get(), destRect, 1.f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, sheetSegment);
         }
+
+        for (const auto& wall : walls) {
+            auto&& rect = wall.rect;
+            pRenderTarget->DrawLine(
+                D2D1::Point2F(static_cast<FLOAT>(rect.left) * m_kPxCellSize,
+                    static_cast<FLOAT>(rect.top) * m_kPxCellSize),
+                D2D1::Point2F(static_cast<FLOAT>(rect.right) * m_kPxCellSize,
+                    static_cast<FLOAT>(rect.bottom) * m_kPxCellSize),
+                m_blueBrush.Get(), 4.f);
+        }
     }
 }
 
 
-HRESULT MazeWindow::OnResize(UINT width, UINT height) noexcept
-{   
-    HRESULT hr = S_OK;
-    if (renderTarget()) {
-        renderTarget()->Resize(D2D1::SizeU(width, height));
-        hr = E_FAIL;
-    }        
-    return hr;
-}
-
-
-HRESULT MazeWindow::OnKeydown(SHORT vKeyCode) noexcept
+HRESULT MazeWindow::OnKeydown(SHORT vKeyCode)
 {
     if (m_model)
         m_model->setPlayerKey(vKeyCode);

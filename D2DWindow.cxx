@@ -46,9 +46,14 @@ HRESULT D2DWindow::LoadResourceBitmap(LPCTSTR resourceName, ID2D1Bitmap** ppBitm
 }
 
 
-void D2DWindow::OnDraw(ID2D1HwndRenderTarget* pRenderTarget) noexcept
+HRESULT D2DWindow::OnResize(UINT width, UINT height)
 {
-
+    HRESULT hr = E_FAIL;    
+    if (m_renderTarget) {
+        m_renderTarget->Resize(D2D1::SizeU(width, height));
+        hr = S_OK;
+    }     
+    return hr;
 }
 
 
@@ -78,7 +83,7 @@ void D2DWindow::DiscardDeviceResources() noexcept
 }
 
 
-HRESULT D2DWindow::OnRender() noexcept
+HRESULT D2DWindow::OnRender()
 {
     HRESULT hr = S_OK;
 

@@ -9,7 +9,7 @@ public:
 
     BasicWindow();
 
-    _NODISCARD bool setWindowSize(double width, double height) noexcept;
+    _NODISCARD bool setClientSize(double width, double height) noexcept;
 
     void RunMessageLoop() noexcept;
 
@@ -17,15 +17,15 @@ public:
 
     HWND windowHandle() const noexcept;
 
-    ~BasicWindow();
+    virtual ~BasicWindow();
 
 protected:
 
-    virtual HRESULT OnRender() noexcept;
+    virtual HRESULT OnRender() = 0;
 
-    virtual HRESULT OnResize(UINT width, UINT height) noexcept;
+    virtual HRESULT OnResize(UINT width, UINT height) = 0;
 
-    virtual HRESULT OnKeydown(SHORT vKeyCode) noexcept;
+    virtual HRESULT OnKeydown(SHORT vKeyCode) = 0;
     
 private:
 

@@ -27,11 +27,9 @@ public:
 
 protected:
 
-    void OnDraw(ID2D1HwndRenderTarget* pRenderTarget) noexcept override;
+    void OnDraw(ID2D1HwndRenderTarget* pRenderTarget) override;   
 
-    HRESULT OnResize(UINT width, UINT height) noexcept override;
-
-    HRESULT OnKeydown(SHORT vKeyCode) noexcept override;
+    HRESULT OnKeydown(SHORT vKeyCode) override;
 
     HRESULT CreateDeviceResources() noexcept override;
 
@@ -54,10 +52,7 @@ private:
 
     static constexpr const int m_kMillisInSec = 1000;
 
-    GameModel *m_model = nullptr;     
-
-    double m_pxlWndWidth  = 640.f;
-    double m_pxlWndHeight = 480.f;
+    GameModel *m_model = nullptr;         
 
     int m_framesPerSec = 48;
     

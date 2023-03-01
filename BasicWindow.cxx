@@ -40,14 +40,18 @@ BasicWindow::~BasicWindow()
 }
 
 
-bool BasicWindow::setWindowSize(double width, double height) noexcept
+bool BasicWindow::setClientSize(double width, double height) noexcept
 {
     bool status = false;    
     float dpi = static_cast<float>(GetDpiForWindow(m_hwnd));
     int scaledWidth = static_cast<int>(ceil(width * dpi / m_kDips));
-    int scaledHeight = static_cast<int>(ceil(height * dpi / m_kDips));
+    int scaledHeight = static_cast<int>(ceil(height * dpi / m_kDips));  
 
-    if (SetWindowPos(m_hwnd, NULL, NULL, NULL, scaledWidth, scaledHeight, SWP_NOMOVE))
+    RECT wr = { 0, 0, scaledWidth, scaledHeight };    
+    AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, FALSE);
+    
+    if (SetWindowPos(m_hwnd, NULL, NULL, NULL, wr.right - wr.left, wr.bottom - wr.top, 
+        SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE))
         status = true;    
 
     return status;
@@ -62,24 +66,6 @@ void BasicWindow::RunMessageLoop() noexcept
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
-}
-
-
-HRESULT BasicWindow::OnRender() noexcept
-{
-    return S_OK;
-}
-
-
-HRESULT BasicWindow::OnResize(UINT width, UINT height) noexcept
-{
-    return S_OK;
-}
-
-
-HRESULT BasicWindow::OnKeydown(SHORT vKeyCode) noexcept
-{
-    return S_OK;
 }
 
 
@@ -121,7 +107,7 @@ LRESULT CALLBACK BasicWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LP
         }
         case WM_KEYDOWN:
         {
-            pApp->OnKeydown(wParam);
+            pApp->OnKeydown(static_cast<SHORT>(wParam));
             return 0;
         }
         case WM_DESTROY:

@@ -13,46 +13,23 @@ class Entity {
 
 public:
 
-public:
+public:        
 
-    explicit Entity()        
-    {
+    D2D_RECT_F sprite();
 
-    }
+    virtual Cell::position position() const;
 
-    D2D_RECT_F sprite()
-    {
-        return m_sprite.current();
-    }
-
-    virtual Cell::position position() const
-    {
-        return m_position;
-    }
-
-    void setPosition(Cell::position newPosition) noexcept
-    {
-        m_position = newPosition;
-    }
+    void setPosition(Cell::position newPosition) noexcept;
 
     virtual ~Entity() = default;
 
 protected:
   
-    void setDirection(Cell::Direction direction) noexcept
-    {
-        m_sprite.setDirection(direction);
-    }
+    void setDirection(Cell::Direction direction) noexcept;
 
-    void setSprite(const Sprite& newSprite)
-    {
-        m_sprite = newSprite;
-    }
+    void setSprite(const Sprite& newSprite);
 
-    void setAnimPos(int number)
-    {
-        m_sprite.setSpriteNumber(number);
-    }
+    void setAnimPos(int number);
 
 private:                
 
@@ -64,6 +41,16 @@ private:
 
 
 class Food : public Entity {
+
+public:
+
+    Food()
+    {
+        Sprite pacmanSprite;
+        using dir = Cell::Direction;
+        pacmanSprite.setSpriteForDirection({ 185, 515 }, dir::undefined);        
+        setSprite(pacmanSprite);
+    }
 
 };
 
@@ -132,17 +119,7 @@ class Pacman : public Creature {
 
 public:
 
-    explicit Pacman()
-    {
-        Sprite pacmanSprite(m_kAnimStateCount);
-        using dir = Cell::Direction;
-        pacmanSprite.setSpriteForDirection({ 100, 515 }, dir::undefined);
-        pacmanSprite.setSpriteForDirection({ 100, 498 }, dir::left);
-        pacmanSprite.setSpriteForDirection({ 100, 515 }, dir::up);
-        pacmanSprite.setSpriteForDirection({ 100, 532 }, dir::right);
-        pacmanSprite.setSpriteForDirection({ 100, 549 }, dir::down);
-        setSprite(pacmanSprite);
-    }
+    Pacman();
 
 protected:
 

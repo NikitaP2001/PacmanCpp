@@ -16,6 +16,8 @@ public:
 
     std::vector<Cell::Wall> getWalls(bool getAll);
 
+    _NODISCARD bool canMoveByDirection(Cell::position pos, Cell::Direction dir);
+
 private:
 
     /* @throw logic_error, bad_alloc */

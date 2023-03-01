@@ -2,12 +2,11 @@
 #include <thread>
 
 #include "MazeModel.h"
+#include "Cell.h"
 
 MazeModel::MazeModel()
 {
-    addWall({ 2, 2, 2, 3 });
-    addWall({ 2, 3, 3, 3 });
-    addWall({ 3, 3, 4, 3 });
+    createMaze(m_mapSize, walls);    
 }
 
 
@@ -39,4 +38,11 @@ std::vector<Cell::Wall> MazeModel::getWalls(bool getAll)
         throw std::logic_error("not supported");
     std::vector<Cell::Wall> result(walls.begin(), walls.end());            
     return result;
+}
+
+
+_NODISCARD bool MazeModel::canMoveByDirection(Cell::position pos, Cell::Direction dir)
+{
+    Cell::Wall crossed = Cell::crossedWallByDirectioin(pos, dir);
+    return !walls.contains(crossed);
 }
