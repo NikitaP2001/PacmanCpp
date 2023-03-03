@@ -41,6 +41,12 @@ std::vector<Cell::Wall> MazeModel::getWalls(bool getAll)
 }
 
 
+std::set<Cell::Wall> MazeModel::getWallset()
+{
+    return walls;
+}
+
+
 _NODISCARD bool MazeModel::canMoveByDirection(Cell::position pos, Cell::Direction dir)
 {
     Cell::Wall crossed = Cell::crossedWallByDirectioin(pos, dir);

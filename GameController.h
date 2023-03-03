@@ -5,12 +5,15 @@
 
 #include "Entity.h"
 #include "MazeModel.h"
+#include "SearchPath.h"
 
 class GameModel {
 
 public:
 
     GameModel() noexcept;
+
+    void playerControlEvent();
 
     void keyEvent();
 
@@ -26,7 +29,8 @@ public:
         std::vector<Entity*> all;
         all.push_back(&m_pacman);
         for (auto& entry : m_food)
-            all.push_back(&entry);        
+            if (!entry.isEaten())
+                all.push_back(&entry);        
         return all;
     }
 
@@ -49,9 +53,13 @@ private:
 
     MazeModel m_maze;
 
+    MazePath pathFinder;
+
     Pacman m_pacman;
 
     std::vector<Food> m_food;
+
+    Food* targetFood = nullptr;
 
 
 };

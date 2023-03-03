@@ -16,6 +16,8 @@ public:
 
     std::vector<Cell::Wall> getWalls(bool getAll);
 
+    std::set<Cell::Wall> getWallset();
+
     _NODISCARD bool canMoveByDirection(Cell::position pos, Cell::Direction dir);
 
 private:
@@ -27,7 +29,7 @@ private:
 
     std::set<Cell::Wall> walls;
 
-    D2D_SIZE_U m_mapSize{ 32, 24 };    
+    D2D_SIZE_U m_mapSize{ 50, 50 };    
     
     static constexpr const char* m_kInvalidPos = "Given position is invalid in current map context";
 };

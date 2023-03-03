@@ -52,6 +52,20 @@ public:
         setSprite(pacmanSprite);
     }
 
+    _NODISCARD bool isEaten()
+    {
+        return m_isEaten;
+    }
+
+    void eat()
+    {
+        m_isEaten = true;
+    }
+
+private:
+
+    bool m_isEaten = false;
+
 };
 
 
